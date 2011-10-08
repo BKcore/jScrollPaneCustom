@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>jScrollpane custom - demo</title>
+	<link type="text/css" href="css/jquery.jscrollpane.css" rel="stylesheet" media="all" /> 
+	<style>
+		*{margin:0;padding:0}
+		html,code{font:15px/22px arial,sans-serif}
+		html{background:#fff;color:#222}
+		html,body{margin:0;padding:0}
+		
+		.scroll {
+			width: 250px;
+			height: 300px;
+			padding: 10px;
+			color: #666;
+		}
+		
+		#toggle
+		{
+			display: block;
+			height: 24px;
+			width: 270px;
+			text-align: center;
+			background-color: #f3f3f3;
+			color: #444;
+			font-weight: bold;
+			cursor: pointer;
+		}
+		#toggle:hover
+		{
+			background-color: #ccc;
+		}
+		
+		/*
+			jScrollpane demo overrides
+		*/
+		.jspContainer
+		{
+			background-color: #e2e2e2;
+		}
+		.jspPane
+		{
+		/*    width: 266px !important;*/
+		}
+		.jspVerticalBar
+		{
+			width: 14px;
+		}
+		.jspDrag
+		{
+			width: 6px;
+			margin-left: 4px;
+			border-radius: 3px;
+			-o-border-radius: 3px
+			-moz-border-radius: 3px;
+			-webkit-border-radius: 3px;
+			background-color: #f2f2f2;
+		}
+		.jspTrack
+		{
+			background-color: #d2d2d2;
+		}
+		.jspVerticalBar .jspCap
+		{
+			display: block;
+			height: 4px;
+			background-color: #d2d2d2;
+		}
+	</style>
+	
+		<!-- latest jQuery direct from google's CDN --> 
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script> 
+		<!-- the mousewheel plugin --> 
+		<script type="text/javascript" src="script/jquery.mousewheel.js"></script> 
+		<!-- the jScrollPane script --> 
+		<script type="text/javascript" src="script/jquery.jscrollpane.custom.min.js"></script>  
+ </head>
+ <body>
+	<div><a id="toggle">Toggle step animation</a></div>
+	 <div class="scroll">
+	  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eros quam, malesuada eu rutrum a, consectetur sed eros. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis accumsan erat vel purus dictum auctor. Sed ultrices, tellus vitae mollis pretium, leo magna adipiscing eros, vel elementum libero tellus et turpis. Quisque odio nulla, tincidunt non imperdiet non, bibendum sed odio. Aenean bibendum, metus et hendrerit fringilla, sem enim convallis nunc, et rutrum quam purus sit amet neque. Donec neque turpis, aliquet ac pretium ac, gravida a enim. Vestibulum libero erat, ornare ut pretium quis, sodales eget est. Praesent sed nisl quis turpis posuere auctor. Ut non lorem vitae justo mattis accumsan et sit amet mi.
+
+	Nam ac semper lacus. Aliquam purus sem, feugiat ac fermentum in, facilisis ut urna. Suspendisse commodo, augue a tempor scelerisque, risus ante tincidunt risus, sit amet laoreet est tortor vel sem. Nam sagittis hendrerit magna ac malesuada. Aenean pharetra volutpat scelerisque. Nam eu felis ligula. Nunc ligula arcu, blandit lacinia interdum eget, tempor non dui. Curabitur faucibus congue dignissim. Morbi pretium, metus quis congue aliquet, purus nisi commodo ipsum, eu faucibus ante felis eget tellus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
+
+	Proin lobortis, sem a ultrices pretium, sapien arcu venenatis lorem, quis euismod risus mi ut tortor. Sed nec egestas lorem. Morbi convallis commodo risus, ut pulvinar arcu dictum nec. Fusce non purus erat. Pellentesque elementum est ac diam fringilla consectetur. Fusce tincidunt eros scelerisque felis bibendum dictum. Praesent id nisl sit amet dui accumsan tincidunt. Donec ornare eros ac lectus convallis ac tincidunt magna rutrum. Vivamus non leo nec nunc faucibus interdum vitae eu ipsum. Phasellus tristique dolor nec nulla sagittis et vehicula odio hendrerit.<p>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$('.scroll').jScrollPane(
+			{
+				showArrows: false,
+				animateScroll: true,
+				animateDuration: 200,
+				mouseWheelSpeed: 200,
+				keyboardSpeed: 120,
+				/* This next parameter is new to jScrollpane-custom */
+				animateSteps: true
+			});
+			
+			var toggleState = true;
+			$('#toggle').click(function()
+			{
+				toggleState = !toggleState;
+				$('.scroll').jScrollPane(
+				{
+					showArrows: false,
+					animateScroll: true,
+					animateDuration: 200,
+					mouseWheelSpeed: 200,
+					keyboardSpeed: 120,
+					animateSteps: toggleState
+				});
+				$('.scroll').data('jsp').scrollToY(0,toggleState);
+			});
+		});
+	</script>
+ </body>
+</html>
