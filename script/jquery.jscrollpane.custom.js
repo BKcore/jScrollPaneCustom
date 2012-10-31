@@ -1,6 +1,7 @@
 /*!
- * jScrollPane - v2.0.0beta11-custom - 2011-08-23
- * 
+ * jScrollPane - v2.0.0beta12-custom - 2012-10-24
+ * http://jscrollpane.kelvinluck.com/
+ *
  * Customized and extended by Thibaut Despoulain
  * http://bkcore.com/
  *
@@ -9,9 +10,10 @@
  * Dual licensed under the MIT and GPL licenses.
  */
 
+
 // Script: jScrollPane - cross browser customisable scrollbars
 //
-// *Version: 2.0.0beta11, Last updated: 2011-07-04*
+// *Version: 2.0.0beta12, Last updated: 2012-09-27*
 //
 // Project Home - http://jscrollpane.kelvinluck.com/
 // GitHub       - http://github.com/vitch/jScrollPane
@@ -20,7 +22,7 @@
 //
 // About: License
 //
-// Copyright (c) 2011 Kelvin Luck
+// Copyright (c) 2012 Kelvin Luck
 // Dual licensed under the MIT or GPL Version 2 licenses.
 // http://jscrollpane.kelvinluck.com/MIT-LICENSE.txt
 // http://jscrollpane.kelvinluck.com/GPL-LICENSE.txt
@@ -42,7 +44,10 @@
 //
 // About: Release History
 //
-// 2.0.0beta11 - (in progress) 
+// 2.0.0beta12 custom (2012-10-24) merged with changes from beta12, fixed scrollbar animations after calling reinitialise()
+// 2.0.0beta12 - (2012-09-27) fix for jQuery 1.8+
+// 2.0.0beta11 - (2012-05-14)
+// 2.0.0beta11 custom (2011-08-23)
 // 2.0.0beta10 - (2011-04-17) cleaner required size calculation, improved keyboard support, stickToBottom/Left, other small fixes
 // 2.0.0beta9 - (2011-01-31) new API methods, bug fixes and correct keyboard support for FF/OSX
 // 2.0.0beta8 - (2011-01-29) touchscreen support, improved keyboard support
@@ -63,7 +68,7 @@
 		// JScrollPane "class" - public methods are available through $('selector').data('jsp')
 		function JScrollPane(elem, s)
 		{
-			var rememberPos = {}, settings, jsp = this, pane, paneWidth, paneHeight, container, contentWidth, contentHeight,
+		    var rememberPos, settings, jsp = this, pane, paneWidth, paneHeight, container, contentWidth, contentHeight,
 				percentInViewH, percentInViewV, isScrollableV, isScrollableH, verticalDrag, dragMaxY,
 				verticalDragPosition, horizontalDrag, dragMaxX, horizontalDragPosition,
 				verticalBar, verticalTrack, scrollbarWidth, verticalTrackHeight, verticalDragHeight, arrowUp, arrowDown,
@@ -84,6 +89,7 @@
 
 			function initialise(s)
 			{
+			    rememberPos = {};
 
 				var /*firstChild, lastChild, */isMaintainingPositon, lastContentX, lastContentY,
 						hasContainingSpaceChanged, originalScrollTop, originalScrollLeft,
@@ -187,7 +193,6 @@
 					removeFocusHandler();
 					removeKeyboardNav();
 					removeClickOnTrack();
-					unhijackInternalLinks();
 				} else {
 					elem.addClass('jspScrollable');
 
@@ -515,10 +520,10 @@
 					doScroll = function()
 					{
 						if (dirX !== 0) {
-							jsp.scrollByX(dirX * settings.arrowButtonSpeed, settings.animateSteps);
+						    jsp.scrollByX(dirX * settings.arrowButtonSpeed, settings.animateSteps);
 						}
 						if (dirY !== 0) {
-							jsp.scrollByY(dirY * settings.arrowButtonSpeed, settings.animateSteps);
+						    jsp.scrollByY(dirY * settings.arrowButtonSpeed, settings.animateSteps);
 						}
 						scrollTimeout = setTimeout(doScroll, isFirst ? settings.initialDelay : settings.arrowRepeatFreq);
 						isFirst = false;
@@ -871,8 +876,8 @@
 				container.unbind(mwEvent).bind(
 					mwEvent,
 					function (event, delta, deltaX, deltaY) {
-						var dX = horizontalDragPosition, dY = verticalDragPosition;
-						jsp.scrollBy(deltaX * settings.mouseWheelSpeed, -deltaY * settings.mouseWheelSpeed, settings.animateSteps);
+					    var dX = horizontalDragPosition, dY = verticalDragPosition;
+					    jsp.scrollBy(deltaX * settings.mouseWheelSpeed, -deltaY * settings.mouseWheelSpeed, settings.animateSteps);
 						// return true if there was no movement so rest of screen can scroll
 						return dX == horizontalDragPosition && dY == verticalDragPosition;
 					}
@@ -980,25 +985,25 @@
 				{
 					var dX = horizontalDragPosition, dY = verticalDragPosition;
 					switch(keyDown) {
-						case 40: // down
-							jsp.scrollByY(settings.keyboardSpeed, settings.animateSteps);
-							break;
-						case 38: // up
-							jsp.scrollByY(-settings.keyboardSpeed, settings.animateSteps);
-							break;
-						case 34: // page down
-						case 32: // space
-							jsp.scrollByY(paneHeight * settings.scrollPagePercent, settings.animateSteps);
-							break;
-						case 33: // page up
-							jsp.scrollByY(-paneHeight * settings.scrollPagePercent, settings.animateSteps);
-							break;
-						case 39: // right
-							jsp.scrollByX(settings.keyboardSpeed, settings.animateSteps);
-							break;
-						case 37: // left
-							jsp.scrollByX(-settings.keyboardSpeed, settings.animateSteps);
-							break;
+					    case 40: // down
+					        jsp.scrollByY(settings.keyboardSpeed, settings.animateSteps);
+					        break;
+					    case 38: // up
+					        jsp.scrollByY(-settings.keyboardSpeed, settings.animateSteps);
+					        break;
+					    case 34: // page down
+					    case 32: // space
+					        jsp.scrollByY(paneHeight * settings.scrollPagePercent, settings.animateSteps);
+					        break;
+					    case 33: // page up
+					        jsp.scrollByY(-paneHeight * settings.scrollPagePercent, settings.animateSteps);
+					        break;
+					    case 39: // right
+					        jsp.scrollByX(settings.keyboardSpeed, settings.animateSteps);
+					        break;
+					    case 37: // left
+					        jsp.scrollByX(-settings.keyboardSpeed, settings.animateSteps);
+					        break;
 					}
 
 					elementHasScrolled = dX != horizontalDragPosition || dY != verticalDragPosition;
@@ -1018,10 +1023,10 @@
 				if (location.hash && location.hash.length > 1) {
 					var e,
 						retryInt,
-						hash = escape(location.hash) // hash must be escaped to prevent XSS
+						hash = escape(location.hash.substr(1)) // hash must be escaped to prevent XSS
 						;
 					try {
-						e = $(hash);
+						e = $('#' + hash + ', a[name="' + hash + '"]');
 					} catch (err) {
 						return;
 					}
@@ -1034,7 +1039,7 @@
 								function()
 								{
 									if (container.scrollTop() > 0) {
-										scrollToElement(hash, true);
+										scrollToElement(e, true);
 										$(document).scrollTop(container.position().top);
 										clearInterval(retryInt);
 									}
@@ -1042,37 +1047,80 @@
 								50
 							);
 						} else {
-							scrollToElement(hash, true);
+							scrollToElement(e, true);
 							$(document).scrollTop(container.position().top);
 						}
 					}
 				}
 			}
 
-			function unhijackInternalLinks()
-			{
-				$('a.jspHijack').unbind('click.jsp-hijack').removeClass('jspHijack');
-			}
-
 			function hijackInternalLinks()
 			{
-				unhijackInternalLinks();
-				$('a[href^=#]').addClass('jspHijack').bind(
-					'click.jsp-hijack',
-					function()
-					{
-						var uriParts = this.href.split('#'), hash;
-						if (uriParts.length > 1) {
-							hash = uriParts[1];
-							if (hash.length > 0 && pane.find('#' + hash).length > 0) {
-								scrollToElement('#' + hash, true);
-								// Need to return false otherwise things mess up... Would be nice to maybe also scroll
-								// the window to the top of the scrollpane?
-								return false;
-							}
+				// only register the link handler once
+				if ($(document.body).data('jspHijack')) {
+					return;
+				}
+
+				// remember that the handler was bound
+				$(document.body).data('jspHijack', true);
+
+				// use live handler to also capture newly created links
+				$(document.body).delegate('a[href*=#]', 'click', function(event) {
+					// does the link point to the same page?
+					// this also takes care of cases with a <base>-Tag or Links not starting with the hash #
+					// e.g. <a href="index.html#test"> when the current url already is index.html
+					var href = this.href.substr(0, this.href.indexOf('#')),
+						locationHref = location.href,
+						hash,
+						element,
+						container,
+						jsp,
+						scrollTop,
+						elementTop;
+					if (location.href.indexOf('#') !== -1) {
+						locationHref = location.href.substr(0, location.href.indexOf('#'));
+					}
+					if (href !== locationHref) {
+						// the link points to another page
+						return;
+					}
+
+					// check if jScrollPane should handle this click event
+					hash = escape(this.href.substr(this.href.indexOf('#') + 1));
+
+					// find the element on the page
+					element;
+					try {
+						element = $('#' + hash + ', a[name="' + hash + '"]');
+					} catch (e) {
+						// hash is not a valid jQuery identifier
+						return;
+					}
+
+					if (!element.length) {
+						// this link does not point to an element on this page
+						return;
+					}
+
+					container = element.closest('.jspScrollable');
+					jsp = container.data('jsp');
+
+					// jsp might be another jsp instance than the one, that bound this event
+					// remember: this event is only bound once for all instances.
+					jsp.scrollToElement(element, true);
+
+					if (container[0].scrollIntoView) {
+						// also scroll to the top of the container (if it is not visible)
+						scrollTop = $(window).scrollTop();
+						elementTop = element.offset().top;
+						if (elementTop < scrollTop || elementTop > scrollTop + $(window).height()) {
+							container[0].scrollIntoView();
 						}
 					}
-				);
+
+					// jsp handled this event, prevent the browser default (scrolling :P)
+					event.preventDefault();
+				});
 			}
 			
 			// Init touch on iPad, iPhone, iPod, Android
@@ -1143,6 +1191,11 @@
 				elem.replaceWith(originalElement.append(pane.children()));
 				originalElement.scrollTop(currentY);
 				originalElement.scrollLeft(currentX);
+
+				// clear reinitialize timer if active
+				if (reinitialiseInterval) {
+					clearInterval(reinitialiseInterval);
+				}
 			}
 
 			// Public API
@@ -1251,36 +1304,32 @@
 					{
 						var params = {};
 						var dest = value;
-						
-						// Add any previous animation scroll step leftover
-						if(rememberPos[prop] == null || rememberPos[prop] == undefined)
-						{
-							rememberPos[prop] = dest;
+
+					    // Add any previous animation scroll step leftover
+						if (rememberPos[prop] == null || rememberPos[prop] == undefined) {
+						    rememberPos[prop] = dest;
 						}
-						else
-						{
-							var current = parseInt(ele.css(prop).replace('px', ''));
-							var leftover = rememberPos[prop] - current;
-							
-							dest += leftover;
-							
-							// Prevent overflow
-							if(prop == 'top')
-							{
-								if(dest > dragMaxY) dest = dragMaxY;
-								else if(dest < 0) dest = 0;
-							}
-							else if(prop == 'left')
-							{
-								if(dest > dragMaxX) dest = dragMaxX;
-								else if(dest < 0) dest = 0;
-							}	
-							
-							rememberPos[prop] = dest;
+						else {
+						    var current = parseInt(ele.css(prop).replace('px', ''));
+						    var leftover = rememberPos[prop] - current;
+
+						    dest += leftover;
+
+						    // Prevent overflow
+						    if (prop == 'top') {
+						        if (dest > dragMaxY) dest = dragMaxY;
+						        else if (dest < 0) dest = 0;
+						    }
+						    else if (prop == 'left') {
+						        if (dest > dragMaxX) dest = dragMaxX;
+						        else if (dest < 0) dest = 0;
+						    }
+
+						    rememberPos[prop] = dest;
 						}
-						
+
 						params[prop] = dest;
-						
+
 						ele.stop().animate(
 							params,
 							{
@@ -1348,10 +1397,7 @@
 					// Hijacks the links on the page which link to content inside the scrollpane. If you have changed
 					// the content of your page (e.g. via AJAX) and want to make sure any new anchor links to the
 					// contents of your scroll pane will work then call this function.
-					hijackInternalLinks: function()
-					{
-						hijackInternalLinks();
-					},
+					hijackInternalLinks: $.noop,
 					// Removes the jScrollPane and returns the page to the state it was in before jScrollPane was
 					// initialised.
 					destroy: function()
@@ -1379,6 +1425,7 @@
 				if (jspApi) {
 					jspApi.reinitialise(settings);
 				} else {
+					$("script",elem).filter('[type="text/javascript"],:not([type])').remove();
 					jspApi = new JScrollPane(elem, settings);
 					elem.data('jsp', jspApi);
 				}
@@ -1401,8 +1448,8 @@
 		contentWidth				: undefined,
 		animateScroll				: false,
 		animateDuration				: 300,
-		animateEase					: 'linear',
-		animateSteps				: false,
+		animateEase                 : 'linear',
+		animateSteps                : false,
 		hijackInternalLinks			: false,
 		verticalGutter				: 4,
 		horizontalGutter			: 4,
